@@ -1,144 +1,158 @@
-# 🎵 TCS AudioManager
 
-![Unity](https://img.shields.io/badge/Unity-2022.3%2B-black.svg?style=for-the-badge&logo=unity)
-![Contributions welcome](https://img.shields.io/badge/Contributions-Welcome-brightgreen.svg?style=for-the-badge)
-![GitHub License](https://img.shields.io/github/license/Ddemon26/TCS-AudioManager?style=for-the-badge)
+# Dependency Injection Lite for Unity
 
-![GitHub Forks](https://img.shields.io/github/forks/Ddemon26/TCS-AudioManager)
-![GitHub Stars](https://img.shields.io/github/stars/Ddemon26/TCS-AudioManager)
-![GitHub Issues](https://img.shields.io/github/issues/Ddemon26/TCS-AudioManager)
-![GitHub Pull Requests](https://img.shields.io/github/issues-pr/Ddemon26/TCS-AudioManager)
-![GitHub Last Commit](https://img.shields.io/github/last-commit/Ddemon26/TCS-AudioManager)
-![GitHub Repo Size](https://img.shields.io/github/repo-size/Ddemon26/TCS-AudioManager)
+![License](https://img.shields.io/github/license/Ddemon26/DependencyInjection-Lite) 
+![Issues](https://img.shields.io/github/issues/Ddemon26/DependencyInjection-Lite)
+![Stars](https://img.shields.io/github/stars/Ddemon26/DependencyInjection-Lite)
+![Forks](https://img.shields.io/github/forks/Ddemon26/DependencyInjection-Lite)
 
-[![Join our Discord](https://img.shields.io/badge/Discord-Join%20Us-7289DA?logo=discord&logoColor=white)](https://discord.gg/knwtcq3N2a)
-![Discord](https://img.shields.io/discord/1047781241010794506)
+## Overview
 
----
+**Dependency Injection Lite** is a lightweight and simple dependency injection framework for Unity, enabling you to inject global services and components into various classes in your project. It simplifies the management of dependencies through attribute-based injection, providing flexibility and better code organization.
 
-# 🚀 Overview
+## Features
 
-**TCS AudioManager** is a sophisticated Unity tool that facilitates efficient and dynamic audio management within Unity projects. Whether you are developing a casual mobile application or a complex, immersive 3D experience, **TCS AudioManager** provides an extensive suite of tools required to manage intricate audio behaviors with ease.
+- **Global Service Registration**: Register components globally and inject them into dependent classes throughout your project.
+- **Attribute-Based Injection**: Use `[Inject]` attributes to inject services or dependencies into fields and methods automatically.
+- **Factory Support**: Use factories to create instances dynamically and inject them where needed.
+- **Reflection-Based System**: Automatically handles the registration and injection of services without requiring explicit dependency management.
 
-This tool enables developers to seamlessly manage, play, adjust volume, and apply effects to a wide array of audio assets within Unity. Featuring event-driven audio playback, advanced volume control, and versatile integration capabilities, **TCS AudioManager** stands as an essential component in any developer's toolkit for creating immersive soundscapes.
+## Installation
 
-## ✨ Key Features
-- **Seamless Audio Management**: Provides a unified interface for managing all audio assets.
-- **Volume Control**: Offers comprehensive control over audio channels, including music, sound effects (SFX), and voice.
-- **Audio Effects**: Integrate either built-in or custom audio effects to tailor your audio experience.
-- **Event-Driven Architecture**: Enable dynamic, responsive audio behaviors through integration with gameplay events.
+To integrate **Dependency Injection Lite** into your Unity project:
 
-## 📜 Table of Contents
-- [Getting Started](#getting-started)
-- [Installation](#installation)
-- [Usage](#usage)
-- [Features](#features)
-- [Customization](#customization)
-- [Contributing](#contributing)
-- [License](#license)
+1. Clone or download the repository from GitHub.
+2. Copy the `DependencyInjection-Lite` folder to your Unity project's `Assets` directory.
+3. Ensure that your scripts and MonoBehaviours are properly integrated into the Unity project.
 
-## 🏁 Getting Started
+## Basic API Usage
 
-To utilize **TCS AudioManager** in your Unity project, follow these straightforward integration steps:
+### 1. Registering Global Services
 
-1. **Install Unity**: Ensure that Unity version 2022.3 or later is installed.
-2. **Clone the Repository**: Clone or download this repository to your local development environment.
-3. **Import to Unity**: Transfer the downloaded folder into the `Assets` directory of your Unity project.
-4. **Open AudioManager**: Use the Unity menu `Tools > AudioManager` to access the editor interface and begin configuring your audio settings.
-
-## 🔧 Installation
-
-1. Clone the repository:
-   ```sh
-   git clone https://github.com/Ddemon26/TCS-AudioManager.git
-   ```
-
-2. Import the folder into your Unity project's `Assets` directory.
-3. Launch Unity, and **TCS AudioManager** should be accessible under the `Tools` menu.
-
-## 🛠️ Usage
-
-### Extension Methods for AudioClip Management
-
-We employ **Extension Methods** to encapsulate the `AudioClip` component, enabling us to interact with audio functionalities while preserving the integrity of the core component. This methodology guarantees that internal modifications or enhancements to **TCS AudioManager** do not affect the manner in which developers interact with its API. The abstraction provided by extension methods ensures that the system remains intuitive and consistent, irrespective of underlying internal changes.
-
-Below is an example illustrating how to leverage the available extension methods with `AudioClip`:
+Start by creating a class that implements `IDependencyProvider` to register your global services. Use the `[Provide]` attribute to register components, which will be available for injection.
 
 ```csharp
-using TCS.AudioManager;
+using UnityEngine;
+using TCS.DependencyInjection.Lite;
 
-public class ExampleUsage : MonoBehaviour
-{
-    public AudioClip myClip;
+public class GameServices : MonoBehaviour, IDependencyProvider {
+    [Provide]
+    public ServiceA ProvideServiceA() => new ServiceA();
+    
+    [Provide]
+    public ServiceB ProvideServiceB() => new ServiceB();
+    
+    [Provide]
+    public FactoryA ProvideFactoryA() => new FactoryA();
+}
+```
 
-    void Start()
-    {
-        // Using the extension method to play the audio clip with specified parameters
-        myClip.PlaySound(volume: 0.8f, pitch: 1f, loop: false, fadeInDuration: 0.5f, fadeOutDuration: 1f);
-        
-        // Using the extension method to play spatial sound
-        Vector3 soundPosition = new Vector3(0, 0, 0);
-        myClip.PlaySpatialSound(soundPosition, volume: 1f, pitch: 1f, loop: false);
-        
-        // Using the extension method to play music
-        myClip.PlayMusic(volume: 0.7f, pitch: 1f, loop: true);
+In this example, services like `ServiceA`, `ServiceB`, and a factory `FactoryA` are registered for global use.
+
+### 2. Injecting Dependencies
+
+You can inject services into any MonoBehaviour class by using the `[Inject]` attribute on fields or methods. This allows you to automatically receive the registered services.
+
+#### Field Injection
+
+```csharp
+using UnityEngine;
+using TCS.DependencyInjection.Lite;
+
+public class PlayerController : MonoBehaviour {
+    [Inject]
+    private ServiceA _serviceA;
+
+    [Inject]
+    private ServiceB _serviceB;
+
+    private void Start() {
+        _serviceA.Initialize("PlayerController: ServiceA");
+        _serviceB.Initialize("PlayerController: ServiceB");
     }
 }
 ```
 
-In this example, methods such as `PlaySound()`, `PlaySpatialSound()`, and `PlayMusic()` extend the default functionality of Unity's audio components, adding capabilities like volume modulation, spatial effects, and fade durations, while preserving a user-friendly API.
+#### Method Injection
 
-### Basic Audio Management
-- Utilize extension methods to efficiently manage and manipulate audio clips.
-- Leverage the `AudioManager` class to control your project's audio landscape.
-- Easily manipulate different categories, such as Music, SFX, and Voice.
+```csharp
+public class ClassA : MonoBehaviour {
+    [Inject] public ServiceA ServiceA;
+    
+    [Inject] public void InjectServiceB(ServiceA service) {
+        ServiceA = service;
+        Debug.Log(message: $"ClassA.InjectServiceB({service})");
+    }
+}
+```
 
-### Volume Control
-- Adjust volume levels dynamically using `AudioManager.SetVolume(category, level)`.
-- Make use of predefined categories, such as *Master*, *Music*, and *SFX*, to maintain consistency.
+In `ClassA`, the `ServiceA` service is injected through both field and method injection. The framework will automatically provide the necessary dependencies.
 
-### Event-Driven Audio
-- Link audio playback to gameplay events for a more immersive experience.
-- Example: Trigger background music when a player enters a specific area.
+### 3. Factory Injection
 
-### Audio Effects
-- Apply audio effects using the `AudioEffects` class, such as echo and reverb.
-- Extend the existing classes to create custom effects tailored to your game's aesthetic.
+Factories can also be injected into your classes, allowing for dynamic creation of objects when needed.
 
-## ✨ Features
-- **Data Control for Saving and Loading**: Implements a robust data control system to save and load audio settings, enabling users to retain their preferences across gaming sessions.
-- **Centralized Volume Control Hub**: A comprehensive volume control hub that facilitates easy adjustments across different audio categories, ensuring uniformity in volume management.
-- **Audio Management**: Efficiently organize and manage a diverse range of audio assets.
-- **Volume Control**: Adjust volumes dynamically during gameplay, covering all key aspects such as music, effects, and dialogue.
-- **Audio Effects**: Incorporate built-in effects or develop customized logic to enrich the audio experience.
-- **Event-Driven System**: Seamlessly integrates with Unity events, allowing for dynamic and context-sensitive audio behaviors.
+```csharp
+using UnityEngine;
+using TCS.DependencyInjection.Lite;
 
-## ⚙️ Customization
+public class ClassB : MonoBehaviour {
+    [Inject] private ServiceA _serviceA;
+    [Inject] private ServiceB _serviceB;
+    
+    private FactoryA _factoryA;
+    
+    [Inject] public void Init(FactoryA factory) {
+        _factoryA = factory;
+        Debug.Log("Initialized FactoryA in ClassB");
+    }
+}
+```
 
-- **Custom Effects**: Extend the `AudioEffects` class to craft unique and personalized effects.
-- **Custom Audio Events**: Define bespoke audio events to align precisely with specific gameplay mechanics.
-- **Volume Adjustments**: Tailor the `IVolumeControl` logic to accommodate unique volume requirements specific to your game's experience.
+Here, `ClassB` receives `ServiceA`, `ServiceB`, and a factory `FactoryA`. The factory allows for dynamic creation of additional services or objects at runtime.
 
-## 🤝 Contributing
+### 4. Running the Injector
 
-We welcome contributions from the community! Here is how you can get involved:
+The injector must be initialized to register all providers and inject dependencies into your classes.
 
-1. **Fork this repository**.
-2. **Create a new branch** for your feature (`git checkout -b feature/NewFeature`).
-3. **Commit your changes** (`git commit -m 'Add new feature'`).
-4. **Push to the branch** (`git push origin feature/NewFeature`).
-5. **Create a pull request** to merge your feature into the main branch.
+```csharp
+using TCS.DependencyInjection.Lite;
+using UnityEngine;
 
-Feel free to open an issue if you encounter any bugs or have suggestions for new features.
+public class Bootstrap : MonoBehaviour {
+    private void Awake() {
+        Injector.Instance.Awake();  // Initialize the injector to start injecting services
+    }
+}
+```
 
-## 📄 License
+By calling `Injector.Instance.Awake()`, the system will scan for all providers and prepare to inject dependencies where needed.
 
-This project is licensed under the MIT License. For more information, see the [LICENSE](LICENSE) file.
+## Advanced Configuration
+
+You can extend or customize the injection process by subclassing the `Injector` class. This allows you to add custom logic or manage more complex dependency lifecycles.
+
+## Example Project
+
+The repository includes example classes demonstrating how to:
+- Register services globally using `[Provide]`.
+- Inject dependencies into fields and methods using `[Inject]`.
+- Use factories for dynamic service creation.
+
+## Contribution
+
+Contributions are welcome! Please feel free to submit pull requests or open issues for any bugs or feature requests.
+
+1. Fork the repository.
+2. Create a new branch (`git checkout -b feature-branch`).
+3. Commit your changes (`git commit -m 'Add new feature'`).
+4. Push the branch (`git push origin feature-branch`).
+5. Open a pull request.
+
+## License
+
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for more details.
 
 ---
 
-## 🌐 Stay Connected
-
-Join our community on [Discord](https://discord.gg/knwtcq3N2a) to discuss features, report bugs, or share your thoughts!
-
-![Banner Image](https://via.placeholder.com/1000x300.png?text=TCS+AudioManager+for+Unity)
+Happy Coding!
