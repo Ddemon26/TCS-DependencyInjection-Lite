@@ -2,16 +2,18 @@ using UnityEditor;
 using UnityEngine;
 namespace TCS.DependencyInjection.Lite {
     public static class InjectorSpawner  {
-        [MenuItem("Tools/TCS/Managers/Spawn Injector", false)]
+#if UNITY_EDITOR
+        [MenuItem("GameObject/Tent City Studio/Global Managers/Add Injector", false, 1000)]
         public static void CreateInjector() {
             if (Object.FindAnyObjectByType<Injector>(FindObjectsInactive.Include)) {
-                InjectorLogger.LogWarning("An Injector already exists in the scene.");
+                Logger.LogWarning("An Injector already exists in the scene.");
                 return;
             }
             
             var injectorObject = new GameObject("[Injector]");
             injectorObject.AddComponent<Injector>();
-            InjectorLogger.Log("Injector spawned.");
+            Logger.Log("Injector spawned successfully.");
         }
+#endif
     }
 }

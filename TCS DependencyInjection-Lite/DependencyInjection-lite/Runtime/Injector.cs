@@ -50,7 +50,7 @@ namespace TCS.DependencyInjection.Lite {
 
             foreach (var injectableField in injectableFields) {
                 if (injectableField.GetValue(i) != null) {
-                    InjectorLogger.LogWarning($"Field '{injectableField.Name}' of class '{type.Name}' is already set.");
+                    Logger.LogWarning($"Field '{injectableField.Name}' of class '{type.Name}' is already set.");
                     continue;
                 }
                 var fieldType = injectableField.FieldType;
@@ -122,11 +122,11 @@ namespace TCS.DependencyInjection.Lite {
             List<string> invalidDependencyList = invalidDependencies.ToList();
             
             if (!invalidDependencyList.Any()) {
-                InjectorLogger.Log("All dependencies are valid.");
+                Logger.Log("All dependencies are valid.");
             } else {
-                InjectorLogger.LogError($"{invalidDependencyList.Count} dependencies are invalid:");
+                Logger.LogError($"{invalidDependencyList.Count} dependencies are invalid:");
                 foreach (string invalidDependency in invalidDependencyList) {
-                    InjectorLogger.LogError(invalidDependency);
+                    Logger.LogError(invalidDependency);
                 }
             }
         }
@@ -158,7 +158,7 @@ namespace TCS.DependencyInjection.Lite {
                 }
             }
             
-            InjectorLogger.Log("All injectable fields cleared.");
+            Logger.Log("All injectable fields cleared.");
         }
 
         object Resolve(Type type) {

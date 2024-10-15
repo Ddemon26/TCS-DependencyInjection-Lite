@@ -1,6 +1,6 @@
 using UnityEngine;
 namespace TCS.DependencyInjection.Lite {
-    internal static class InjectorLogger {
+    internal static class Logger {
         const string CLASS_NAME = "Injector-lite";
         const string LOG_COLOR = "green";
         const string LOG_COLOR_WARNING = "yellow";
