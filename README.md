@@ -1,10 +1,10 @@
 
 # Dependency Injection Lite for Unity
 
-![License](https://img.shields.io/github/license/Ddemon26/DependencyInjection-Lite)
-![Issues](https://img.shields.io/github/issues/Ddemon26/DependencyInjection-Lite)
-![Stars](https://img.shields.io/github/stars/Ddemon26/DependencyInjection-Lite)
-![Forks](https://img.shields.io/github/forks/Ddemon26/DependencyInjection-Lite)
+![License](https://img.shields.io/github/license/Ddemon26/TCS-DependencyInjection-Lite)
+![Issues](https://img.shields.io/github/issues/Ddemon26/TCS-DependencyInjection-Lite)
+![Stars](https://img.shields.io/github/stars/Ddemon26/TCS-DependencyInjection-Lite)
+![Forks](https://img.shields.io/github/forks/Ddemon26/TCS-DependencyInjection-Lite)
 
 ## Overview
 
