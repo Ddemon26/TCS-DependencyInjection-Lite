@@ -1,0 +1,18 @@
+{
+    "name": "TCS.DependencyInjection.Lite.Editor",
+    "rootNamespace": "TCS.DependencyInjection.Lite.Editor",
+    "references": [
+        "TCS.DependencyInjection.Lite"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": true,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
