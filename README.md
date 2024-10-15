@@ -1,41 +1,40 @@
 
 # Dependency Injection Lite for Unity
 
-![License](https://img.shields.io/github/license/Ddemon26/DependencyInjection-Lite) 
-![Issues](https://img.shields.io/github/issues/Ddemon26/DependencyInjection-Lite)
-![Stars](https://img.shields.io/github/stars/Ddemon26/DependencyInjection-Lite)
-![Forks](https://img.shields.io/github/forks/Ddemon26/DependencyInjection-Lite)
+![License](https://img.shields.io/github/license/Ddemon26/TCS-DependencyInjection-Lite)
+![Issues](https://img.shields.io/github/issues/Ddemon26/TCS-DependencyInjection-Lite)
+![Stars](https://img.shields.io/github/stars/Ddemon26/TCS-DependencyInjection-Lite)
+![Forks](https://img.shields.io/github/forks/Ddemon26/TCS-DependencyInjection-Lite)
 
 ## Overview
 
-**Dependency Injection Lite** is a lightweight and simple dependency injection framework for Unity, enabling you to inject global services and components into various classes in your project. It simplifies the management of dependencies through attribute-based injection, providing flexibility and better code organization.
+**Dependency Injection Lite** is a lightweight, reflection-based dependency injection framework for Unity, designed to simplify the process of managing and injecting dependencies across various MonoBehaviour components.
+
+The system leverages attributes like `[Inject]` and `[Provide]` to automatically handle dependency injection without manual setup, following your project's defined services and factories.
 
 ## Features
 
-- **Global Service Registration**: Register components globally and inject them into dependent classes throughout your project.
-- **Attribute-Based Injection**: Use `[Inject]` attributes to inject services or dependencies into fields and methods automatically.
-- **Factory Support**: Use factories to create instances dynamically and inject them where needed.
-- **Reflection-Based System**: Automatically handles the registration and injection of services without requiring explicit dependency management.
+- **Field and Method Injection**: Automatically inject services into fields or methods using the `[Inject]` attribute.
+- **Service Registration with Providers**: Register services globally using `[Provide]` within classes that implement `IDependencyProvider`.
+- **Factory Support**: Factories can be injected and used to create instances dynamically.
 
 ## Installation
 
-To integrate **Dependency Injection Lite** into your Unity project:
+1. Clone or download the repository.
+2. Add the `DependencyInjection-Lite` folder to your Unity project's `Assets` directory.
+3. Ensure that your service and factory scripts are properly integrated.
 
-1. Clone or download the repository from GitHub.
-2. Copy the `DependencyInjection-Lite` folder to your Unity project's `Assets` directory.
-3. Ensure that your scripts and MonoBehaviours are properly integrated into the Unity project.
+## Usage
 
-## Basic API Usage
+### 1. Defining and Registering Services
 
-### 1. Registering Global Services
-
-Start by creating a class that implements `IDependencyProvider` to register your global services. Use the `[Provide]` attribute to register components, which will be available for injection.
+Create a class that implements `IDependencyProvider` and uses the `[Provide]` attribute to register services.
 
 ```csharp
 using UnityEngine;
 using TCS.DependencyInjection.Lite;
 
-public class GameServices : MonoBehaviour, IDependencyProvider {
+public class ProviderExample : MonoBehaviour, IDependencyProvider {
     [Provide]
     public ServiceA ProvideServiceA() => new ServiceA();
     
@@ -47,11 +46,11 @@ public class GameServices : MonoBehaviour, IDependencyProvider {
 }
 ```
 
-In this example, services like `ServiceA`, `ServiceB`, and a factory `FactoryA` are registered for global use.
+In this example, services like `ServiceA`, `ServiceB`, and `FactoryA` are registered globally via the `[Provide]` attribute, making them available for injection.
 
-### 2. Injecting Dependencies
+### 2. Injecting Services into Components
 
-You can inject services into any MonoBehaviour class by using the `[Inject]` attribute on fields or methods. This allows you to automatically receive the registered services.
+You can inject these registered services into other MonoBehaviours using the `[Inject]` attribute.
 
 #### Field Injection
 
@@ -59,61 +58,45 @@ You can inject services into any MonoBehaviour class by using the `[Inject]` att
 using UnityEngine;
 using TCS.DependencyInjection.Lite;
 
-public class PlayerController : MonoBehaviour {
-    [Inject]
-    private ServiceA _serviceA;
-
-    [Inject]
-    private ServiceB _serviceB;
-
-    private void Start() {
-        _serviceA.Initialize("PlayerController: ServiceA");
-        _serviceB.Initialize("PlayerController: ServiceB");
-    }
-}
-```
-
-#### Method Injection
-
-```csharp
 public class ClassA : MonoBehaviour {
-    [Inject] public ServiceA ServiceA;
-    
-    [Inject] public void InjectServiceB(ServiceA service) {
+    [Inject]
+    public ServiceA ServiceA;
+
+    [Inject]
+    public void InjectServiceB(ServiceA service) {
         ServiceA = service;
         Debug.Log(message: $"ClassA.InjectServiceB({service})");
     }
 }
 ```
 
-In `ClassA`, the `ServiceA` service is injected through both field and method injection. The framework will automatically provide the necessary dependencies.
+In this example, `ServiceA` is injected into the field, and an additional method `InjectServiceB` shows method injection for more flexible injection use cases.
 
-### 3. Factory Injection
-
-Factories can also be injected into your classes, allowing for dynamic creation of objects when needed.
+#### Injecting Multiple Services and Factories
 
 ```csharp
 using UnityEngine;
 using TCS.DependencyInjection.Lite;
 
 public class ClassB : MonoBehaviour {
-    [Inject] private ServiceA _serviceA;
-    [Inject] private ServiceB _serviceB;
-    
-    private FactoryA _factoryA;
-    
-    [Inject] public void Init(FactoryA factory) {
-        _factoryA = factory;
+    [Inject] private ServiceA m_serviceA;
+    [Inject] private ServiceB m_serviceB;
+
+    private FactoryA m_factoryA;
+
+    [Inject]
+    public void Init(FactoryA factory) {
+        m_factoryA = factory;
         Debug.Log("Initialized FactoryA in ClassB");
     }
 }
 ```
 
-Here, `ClassB` receives `ServiceA`, `ServiceB`, and a factory `FactoryA`. The factory allows for dynamic creation of additional services or objects at runtime.
+In `ClassB`, `ServiceA`, `ServiceB`, and `FactoryA` are injected into fields and methods. This allows the class to dynamically interact with the services and factories provided.
 
-### 4. Running the Injector
+### 3. Initializing the Injector
 
-The injector must be initialized to register all providers and inject dependencies into your classes.
+The injector should be initialized early in the application's lifecycle, typically in a bootstrap class or in `Awake`.
 
 ```csharp
 using TCS.DependencyInjection.Lite;
@@ -126,18 +109,14 @@ public class Bootstrap : MonoBehaviour {
 }
 ```
 
-By calling `Injector.Instance.Awake()`, the system will scan for all providers and prepare to inject dependencies where needed.
-
-## Advanced Configuration
-
-You can extend or customize the injection process by subclassing the `Injector` class. This allows you to add custom logic or manage more complex dependency lifecycles.
+By calling `Injector.Instance.Awake()`, the system is ready to inject services wherever the `[Inject]` attribute is used.
 
 ## Example Project
 
-The repository includes example classes demonstrating how to:
-- Register services globally using `[Provide]`.
-- Inject dependencies into fields and methods using `[Inject]`.
-- Use factories for dynamic service creation.
+The repository includes examples such as `ClassA`, `ClassB`, and `ProviderExample` that demonstrate how to:
+- Register services with `[Provide]`.
+- Inject services into fields and methods using `[Inject]`.
+- Use factories to create instances dynamically.
 
 ## Contribution
 
