@@ -7,8 +7,6 @@ namespace TCS.DependencyInjection.Lite {
         const string LOG_COLOR_ERROR = "red";
         const string LOG_COLOR_ASSERT = "magenta";
         const string LOG_COLOR_EXCEPTION = "orange";
-        
-        public static bool IsDebugMode { get; set; } = true;
 
         static string SetPrefix(this string newString, LogType logType) {
             string color = logType switch {
@@ -21,48 +19,65 @@ namespace TCS.DependencyInjection.Lite {
             return $"<color={color}>[{newString}]</color>";
         }
 
-        static void LogInternal(string message, LogType logType, Object context = null) {
-            if (!IsDebugMode) return;
+        static void LogInternal(object message, LogType logType, Object context = null) {
             var formattedMessage = $"{CLASS_NAME.SetPrefix(logType)} {message}";
-            #if PROJECT_DEBUG
             switch (logType) {
                 case LogType.Warning:
-                    // ReSharper disable once Unity.PerformanceCriticalCodeInvocation
-                    Debug.LogWarning(formattedMessage);
+                    if (!context) {
+                        Debug.LogWarning(formattedMessage);
+                        break;
+                    }
+
+                    Debug.LogWarning(formattedMessage, context);
                     break;
                 case LogType.Error:
-                    // ReSharper disable once Unity.PerformanceCriticalCodeInvocation
-                    Debug.LogError(formattedMessage);
+                    if (!context) {
+                        Debug.LogError(formattedMessage);
+                        break;
+                    }
+
+                    Debug.LogError(formattedMessage, context);
                     break;
                 case LogType.Assert:
-                    // ReSharper disable once Unity.PerformanceCriticalCodeInvocation
+                    if (!context) {
+                        Debug.LogAssertion(formattedMessage);
+                        break;
+                    }
+
                     Debug.LogAssertion(formattedMessage, context);
                     break;
                 case LogType.Exception:
-                    // ReSharper disable once Unity.PerformanceCriticalCodeInvocation
-                    Debug.LogException(new System.Exception(formattedMessage));
+                    if (!context) {
+                        Debug.LogException(new System.Exception(formattedMessage));
+                        break;
+                    }
+
+                    Debug.LogException(new System.Exception(formattedMessage), context);
                     break;
                 case LogType.Log:
-                    // ReSharper disable once Unity.PerformanceCriticalCodeInvocation
-                    Debug.Log(formattedMessage);
-                    break;
                 default:
-                    // ReSharper disable once Unity.PerformanceCriticalCodeInvocation
-                    Debug.Log(formattedMessage);
+                    if (!context) {
+                        Debug.Log(formattedMessage);
+                        break;
+                    }
+
+                    Debug.Log(formattedMessage, context);
                     break;
             }
-            #endif
         }
 
-        // ReSharper disable once Unity.PerformanceCriticalCodeInvocation
-        public static void Log(string message) => LogInternal(message, LogType.Log);
-        // ReSharper disable once Unity.PerformanceCriticalCodeInvocation
-        public static void LogWarning(string message) => LogInternal(message, LogType.Warning);
-        // ReSharper disable once Unity.PerformanceCriticalCodeInvocation
-        public static void LogError(string message) => LogInternal(message, LogType.Error);
-        // ReSharper disable once Unity.PerformanceCriticalCodeInvocation
-        public static void LogAssert(string message, Object ctx) => LogInternal(message, LogType.Assert, ctx);
-        // ReSharper disable once Unity.PerformanceCriticalCodeInvocation
-        public static void LogException(string message) => LogInternal(message, LogType.Exception);
+        //Without context
+        public static void Log(object message) => LogInternal(message, LogType.Log);
+        public static void LogWarning(object message) => LogInternal(message, LogType.Warning);
+        public static void LogError(object message) => LogInternal(message, LogType.Error);
+        public static void LogAssert(object message) => LogInternal(message, LogType.Assert);
+        public static void LogException(object message) => LogInternal(message, LogType.Exception);
+
+        //With context
+        public static void Log(object message, Object ctx) => LogInternal(message, LogType.Log, ctx);
+        public static void LogWarning(object message, Object ctx) => LogInternal(message, LogType.Warning, ctx);
+        public static void LogError(object message, Object ctx) => LogInternal(message, LogType.Error, ctx);
+        public static void LogAssert(object message, Object ctx) => LogInternal(message, LogType.Assert, ctx);
+        public static void LogException(object message, Object ctx) => LogInternal(message, LogType.Exception, ctx);
     }
 }
