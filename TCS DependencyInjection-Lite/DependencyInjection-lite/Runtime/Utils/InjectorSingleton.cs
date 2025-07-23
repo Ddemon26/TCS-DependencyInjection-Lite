@@ -16,13 +16,15 @@ namespace TCS.DependencyInjection.Lite {
                 return instance;
             }
         }
+        
         /// <summary>
         /// Make sure to call base.Awake() in override if you need awake.
         /// </summary>
         protected virtual void Awake() {
             InitializeSingleton();
         }
-        protected virtual void InitializeSingleton() {
+
+        void InitializeSingleton() {
             if (!Application.isPlaying) return;
             if (m_autoUnparentOnAwake) {
                 transform.SetParent(null);

@@ -22,5 +22,4 @@ namespace TCS.DependencyInjection.Lite.Tests {
 
         public ServiceA CreateServiceA() => m_cachedServiceA ??= new ServiceA();
     }
-
 }
